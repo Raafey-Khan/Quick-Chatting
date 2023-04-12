@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Quick Chat App</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <header><h1>Quick Chat App</h1></header>
+  <form id="chat-form">
+    <input type="text" id="name-input" placeholder="Name" required>
+    <input type="text" id="message-input" placeholder="Message" required>
+    <button type="submit">Send</button>
+  </form>
+
+  <ul id="messages"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const form = document.getElementById('chat-form');
+    const nameInput = document.getElementById('name-input');
+    const messageInput = document.getElementById('message-input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const name = nameInput.value;
+      const message = messageInput.value;
+
+      socket.emit('chat-message', {name: name, message: message});
+
+      messageInput.value = '';
+    });
+
+    socket.on('chat-message', (data) => {
+      const li = document.createElement('li');
+      li.innerText = `${data.name}: ${data.message}`;
+      messages.appendChild(li);
+    });
+  </script>
+</body>
+</html>
